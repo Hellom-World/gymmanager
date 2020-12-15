@@ -1,0 +1,50 @@
+__________________________Trabalhando com Bando de Dados___________________________________________________________
+                                    Desafio 5.1
+
+
+++++++++++++++++++++++++ Instalando Postgres e Postbird +++++++++++++++++++++++
+
+
+    .Vamos installar o banco de dados Postgres, Link para windows
+
+        https://github.com/rocketseat-education/bootcamp-launchbase-05/blob/master/docs/guia-instalacao-postgres.md
+    
+    .Vamos instalar o Postbird, programa de interface para o postgres, link:
+
+        https://electronjs.org/apps/postbird 
+
+
+
+
+
+
+++++++++++++++++++++++++ Criando banco e tabela de instrutores +++++++++++++++++++
+
+
+    .Abra o powershell e escreva a linha para chegar ao banco de dados instalado:
+
+        cd "C:\Program Files\PostgreSQL\12\bin\"
+
+    .E essa linha para iniciar o banco de dados:
+
+        .\pg_ctl.exe -D "C:\Program Files\PostgreSQL\12\data" start
+
+    .Agora abra o postbird e faz a conexão
+
+    .Na parte query, dentro do postbird, escreva a linha:
+
+        CREATE DATABASE gymmanager
+
+    .Clique em "Run Query"
+    .De um refresh na lista de DATABASEs
+
+    .Selecione a DATABASE e a parte Structure
+        .Crie uma nova tabala no botao "add table"
+
+    . Clique em add column
+        .Crie o avatar_URL de Type: "text" e marcar permitir vazio(allow null)
+        .Crie o name de Type: "text" e marcar permitir vazio(allow null)
+        .Crie o birth de Type: "timestamp without time zone" e marcar permitir vazia(allow null)
+        .Crie o gender de Type: "text" e marcar permitir vazia(allow null)
+        .Crie o services de Type: "text" e marcar permitir vazia(allow null)
+        .Crie o create_at de Type: "timestamp without time zone" e marcar permitir vazia(allow null)

@@ -1,0 +1,35 @@
+{
+  "members": [
+    {
+      "id": 2,
+      "avatar_url": "https://multimidia.boavontade.com/sites/default/files/styles/grande/public/guga_1920_0.jpg?itok=gphjRKpF",
+      "name": "Guga",
+      "email": "Guga@hotmail.com",
+      "birth": 852768000000,
+      "gender": "M",
+      "blood": "O-",
+      "weight": "79",
+      "height": "170"
+    }
+  ],
+  "instructors": [
+    {
+      "id": 7,
+      "avatar_url": "https://images.unsplash.com/photo-1550345332-09e3ac987658?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
+      "name": "Natalia Miranda",
+      "birth": 718329600000,
+      "gender": "F",
+      "services": "musculação, personal trainer, nutrição",
+      "created_at": 1601206140901
+    },
+    {
+      "id": 8,
+      "avatar_url": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+      "name": "Bernardo Saquarema",
+      "birth": -23657270400000,
+      "gender": "M",
+      "services": "Crossfit, Jiu-Jitsu",
+      "created_at": 1602326109719
+    }
+  ]
+}

@@ -2,6 +2,13 @@ __________________________Trabalhando com Bando de Dados________________________
                                     Desafio 5.1
 
 
+
+
+
+
+
+
+
 ++++++++++++++++++++++++ Instalando Postgres e Postbird +++++++++++++++++++++++
 
 
@@ -12,6 +19,11 @@ __________________________Trabalhando com Bando de Dados________________________
     .Vamos instalar o Postbird, programa de interface para o postgres, link:
 
         https://electronjs.org/apps/postbird 
+
+
+
+
+
 
 
 
@@ -48,3 +60,127 @@ __________________________Trabalhando com Bando de Dados________________________
         .Crie o gender de Type: "text" e marcar permitir vazia(allow null)
         .Crie o services de Type: "text" e marcar permitir vazia(allow null)
         .Crie o create_at de Type: "timestamp without time zone" e marcar permitir vazia(allow null)
+
+    
+
+
+
+
+
+
+
+
+
+
+
+  ++++++++++++++++++++++++ Refatorando estrutura de pastas +++++++++++++++++++  
+
+
+    .Na pasta bootcamp copie a pasta modulo04 e cole remoneando ela para modulo05
+            .SEM NODE_MODULES E package-lock.json
+
+    .Abra o modulo05 no VisualStudio
+
+    .Crie uma nova pasta chamada "src" dentro dela colque a pasta "controllers",
+    a pasta "views" e todos os arquivos ".js"
+
+    .Deleta o data.json
+
+    .Dentro da pasta "src" crie a pastas "app" e coloque a pasta "controllers",
+    e a pasta "views" dentro dela.
+
+    .No arquivo package.json mude a linha:
+
+        "nodemon": "nodemon --ignore server.js",
+                para
+        "nodemon": "nodemon --ignore src/server.js",
+
+            .E mude a linha:
+
+        "browsersync": "browser-sync start --proxy http://localhost:5000 --files 'public,views, !data.json'"
+                para
+        "browsersync": "browser-sync start --proxy http://localhost:5000 --files 'public,src/app/views'"
+
+    .Na pasta "src" em routes.js, reescreva aS linhaS:
+
+        const instructors = require('./app/controllers/instructors')
+        const members = require('./app/controllers/members')
+
+    .No arquivo serve.js mude a linha:
+
+        nunjucks.configure("src/app/views", {
+
+    .Dentro da pasta "src" crie a pasta "lib"
+
+        .Coloque o arquivo utils.js dentro da pasta "lib"
+
+
+
+
+
+
+
+
+
+
+
+
+
+++++++++++++++++++++++++ Exportando com methof shorthand ES6 +++++++++++++++++++  
+
+
+    .No arquivo instructors.js
+
+        .Delete a linha "const fs" e "const data"
+
+        .Crie um module.exports de objeto para refazer as funçoes das rotas:
+
+            module.exports = {
+                index(req, res){
+
+                }   
+                create(req, res){
+                    
+                }   
+                post(req, res){
+                    
+                }   
+                show(req, res){
+                    
+                }                
+                edit(req, res){
+                    
+                }   
+                put(req, res){
+                    
+                }   
+                delete(req, res){
+                    
+                }   
+            }    
+
+        .Copie e cole o conteudo dos respectivos exports do arquivo
+
+        .No ES6 index tire o ,{ instructors: data.instructors }
+
+        .Na ES6 "post" deixe apenas o conteudo das KeysObject,
+         o let = req.body e add um return vazio
+
+        .No show, edit e delete o conteudo será só return
+
+        .No put pode colocar a validaçao keysObject
+
+        .Mude a Const, antes do exports, para:
+
+            const { age, date } = require('../../lib/utils')
+
+
+    .No arquivo members.js copie e cole o conteudo do instructors.js
+
+        .Troque tudo que for instructores por members
+        .No ES6 index tire o ,{ members: data.members }
+        .Delete a linha "let" no ES6 post
+
+    .No arquivo utils.js tire as linhas:
+
+        .exemplo: age: function() ----> age()

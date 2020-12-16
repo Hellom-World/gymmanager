@@ -184,3 +184,13 @@ __________________________Trabalhando com Bando de Dados________________________
     .No arquivo utils.js tire as linhas:
 
         .exemplo: age: function() ----> age()
+
+
+
+
+
+
+
+
+
+    ++++++++++++++++++++++++  +++++++++++++++++++  

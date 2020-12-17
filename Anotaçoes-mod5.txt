@@ -77,7 +77,7 @@ __________________________Trabalhando com Bando de Dados________________________
 
 
     .Na pasta bootcamp copie a pasta modulo04 e cole remoneando ela para modulo05
-            .SEM NODE_MODULES E package-lock.json
+            .Delete NODE_MODULES E package-lock.json
 
     .Abra o modulo05 no VisualStudio
 
@@ -106,7 +106,7 @@ __________________________Trabalhando com Bando de Dados________________________
         const instructors = require('./app/controllers/instructors')
         const members = require('./app/controllers/members')
 
-    .No arquivo serve.js mude a linha:
+    .No arquivo server.js mude a linha:
 
         nunjucks.configure("src/app/views", {
 
@@ -183,7 +183,7 @@ __________________________Trabalhando com Bando de Dados________________________
 
     .No arquivo utils.js tire as linhas:
 
-        .exemplo: age: function() ----> age()
+        .exemplo: age: function() --para--> age()
 
 
 
@@ -193,4 +193,31 @@ __________________________Trabalhando com Bando de Dados________________________
 
 
 
-    ++++++++++++++++++++++++  +++++++++++++++++++  
+    
+    
++++++++++++++++++++++++ Configurando conexão do banco +++++++++++++++++++ 
+
+
+    .instale  a dependencia para conectar o projeto com o postgres:
+
+        npm install pg
+
+    .De também o comando npm install, para garantir o resto das configuraçoes:
+
+        npm install
+
+    .Dentro da pasta "src" crie uma pasta de nome "config"
+
+        .Dentro da pasta "config" crie um script de nome "db.js"
+
+            .Dentro do arquivo escreva esse codigo:
+
+                const { Pool } = require("pg")
+
+                module.exports = new Pool({
+                    user: 'hellom',
+                    password: "",
+                    host: "localhost",
+                    port: 5432,
+                    database: "gymmanager"  
+                })

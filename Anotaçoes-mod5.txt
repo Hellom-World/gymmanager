@@ -221,3 +221,132 @@ __________________________Trabalhando com Bando de Dados________________________
                     port: 5432,
                     database: "gymmanager"  
                 })
+
+
+
+    
+
+
+
+
+
+
+
+
+__________________________Trabalhando com Bando de Dados___________________________________________________________
+                                    Desafio 5.1]
+
+
+
+
++++++++++++++++++++++++ Inserindo dados no banco +++++++++++++++++++
+
+
+
+    .No arquivo instructors.js na função POST
+
+        .Delete a linha da variavel let
+
+        .Em cima to "return" escreva as linhas:
+            
+            const query = `
+                INSERT INTO instructors (
+                    name,
+                    avatar_URL,
+                    gender,
+                    services,
+                    birth,
+                    create_at
+                ) VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING id
+            `
+
+            const values = [
+                req.body.name,
+                req.body.avatar_URL,
+                req.body.gender,
+                req.body.services,
+                date(req.body.birth).iso,
+                date(Date.now()).iso
+            ]
+
+    .Coloque o POSTGRES para rodar e abra o POSTBIRD
+
+    .No POSTBIRD abra o database gymmanager e selecione a tabela instructors
+
+        .Na aba "Query" escreva essas linhas:
+
+            INSERT INTO instructors (
+                name,
+                avatar_URL,
+                gender,
+                services,
+                birth,
+                create_at
+            ) VALUES ('hellom', 'htt', 'm', 'se', '2000-01-02', '2000-02-01')
+            RETURNING id
+
+        .Clique no botão "Run Selection"
+
+    .No arquivo instructors.js na função POST
+
+        .tire o "return"
+
+        .Em baixo do "const {age,date}", escreva
+
+            const db = require('../../config/db')
+
+        .Escreva no fim da função POST:
+
+            db.query(query, values, function (err, results){
+                console.log(err)
+                console.log(results)
+                return
+            })
+    
+        .Rode o site com "npm start"
+
+            .crie um novo instrutor
+            .Abra o POSTBIRD para analisar os dados salvos na tabala instructors/content
+
+        .Estando tudo certo reescreva:
+
+            db.query(query, values, function (err, results){
+                if(err) return res.send("Database Error!")
+
+                return res.redirect(`/instructors/${results.rows[0].id}`)
+            })
+
+
+
+
+
+
+
+
++++++++++++++++++++++++ Buscando dados do banco +++++++++++++++++++
+
+
+
+    .No arquivo instructors.js na função INDEX, escreva em cima do return:
+
+        db.query(`SELECT * FROM instructors`, function(err, results){
+            if(err) return res.send("Database Error!")
+
+            return res.redirect("instructors/index", {instructors: results.rows})
+        })
+
+    .Apos salvar ve se vai aparecer os instrutores na pagina index
+
+
+
+
+
+
+
+
+
++++++++++++++++++++++++ Criando models e aprofundando em callback function +++++++++++++++++++
+
+
+

@@ -349,4 +349,86 @@ __________________________Trabalhando com Bando de Dados________________________
 +++++++++++++++++++++++ Criando models e aprofundando em callback function +++++++++++++++++++
 
 
+    .Dentro da pasta "app" crie a pasta "models"
 
+        .Ela será responsavel pela parte de ligação com o banco de dados
+
+        .Dentro da pasta "models" crie o script "instructor.js"
+
+        .Dentro do (PRIMEIRA LETRA MAIUSCULA)"Instructor.js", escreva:
+
+            module.exports = {
+                all(callback){
+
+                    db.query(`SELECT * FROM instructors`, function(err, results){
+                        if(err) return res.send("Database Error!")
+
+                        callback(results.rows)
+                    })
+
+                },
+
+                create(){
+
+                }
+            }
+    .No arquivo instructors.j, em baixo do "const db" escreva:
+
+        const Instructor = require ('../models/Instructor')
+
+    .Ainda no arquivo instructors.js, na função index, delete o conteudo e escreva:
+
+        Instructor.all(function(instructors) {
+            return res.render("instructors/index", {instructors})
+    
+        })
+
+    .No arquivo Instructor.js no objeto "create()", escreva:
+
+        create(data, callback){
+            const query = `
+                INSERT INTO instructors (
+                    name,
+                    avatar_URL,
+                    gender,
+                    services,
+                    birth,
+                    created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING id
+            `
+        const values = [
+            data.nome,
+            data.avatar_URL,
+            data.gender,
+            data.services,
+            date(data.birth).iso
+            date(Date.now()).iso
+        ]
+
+        db.query(query, values, function(err, results){
+            if(err) return res.send("Database Error!")
+
+            callback(results.rows[0])
+        })
+        }
+
+    .No arquivo instructors.js na função POST reescreva o conteudo para:
+
+        const keys = Object.keys(req.body)
+
+        for(key of keys) {
+            if (req.body[key] == "") {
+                return res.send('please, fill all fields')
+            }
+        }
+
+        Instructor.create(req.body, function(instructor) {
+            return res.redirect(`/instructors/${instructor.id}`)
+        })
+
+    .Ainda no arquivo instructors.js
+
+        .Passe o "const db" e o "const {age, data}" para o arquivo Instructor.js
+
+    TESTAR - TENTAR CRIAR NOVO INSTRUTOR (vai ser preciso voltar no index pra ver se salvou)

@@ -432,3 +432,47 @@ __________________________Trabalhando com Bando de Dados________________________
         .Passe o "const db" e o "const {age, data}" para o arquivo Instructor.js
 
     TESTAR - TENTAR CRIAR NOVO INSTRUTOR (vai ser preciso voltar no index pra ver se salvou)
+
+
+
+
+
+
+
+
+
++++++++++++++++++++++++ Buscando Registro unico na banco de dados +++++++++++++++++++
+
+
+
+    .No arquivo Instructor.js crie o objeto:
+
+        find(id, callback) {`
+            SELECT *
+            FROM instructors
+            WHERE id = $1`, [id], function(err, results){
+                if(err) return res.send("Database Error!")
+                callback(results.rows[0])
+            }
+        }
+    
+    .No arquivo instructors.js na função SHOW, escreva:
+
+        Instructor.find(req.params.id, function (instructor){
+            if (!instructor) return res.send("Instructor no found!")
+
+            instructor.age = age(instrutor.birth)
+            instructor.services = instructor.services.split(",")
+
+            instructor.create_at = date(instructor.created_at).format
+        })
+
+        .Reescreva a const do age:
+
+        const { age } = require('../../lib/utils')
+
+    .No arquivo ultis.js, no return do "date(timestamp)",
+
+        .Em baixo de "birthDay: ${day}/${month}", escreva:
+
+            format: `${day}/${month}/${year}`

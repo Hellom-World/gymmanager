@@ -297,6 +297,8 @@ ________________________________________________________________________________
             const db = require('../../config/db')
 
         .Escreva no fim da função POST:
+            
+            const { Pool } = require("pg")
 
             db.query(query, values, function (err, results){
                 console.log(err)
@@ -333,7 +335,7 @@ ________________________________________________________________________________
         db.query(`SELECT * FROM instructors`, function(err, results){
             if(err) return res.send("Database Error!")
 
-            return res.redirect("instructors/index", {instructors: results.rows})
+            return res.render("instructors/index", {instructors: results.rows})
         })
 
     .Apos salvar ve se vai aparecer os instrutores na pagina index
@@ -353,7 +355,9 @@ ________________________________________________________________________________
 
         .Ela será responsavel pela parte de ligação com o banco de dados
 
-        .Dentro da pasta "models" crie o script "instructor.js"
+        .Dentro da pasta "models" crie o script "Instructor.js"
+
+PAREI AQUI ESTOU AQUI AQUII
 
         .Dentro do (PRIMEIRA LETRA MAIUSCULA)"Instructor.js", escreva:
 
@@ -372,12 +376,11 @@ ________________________________________________________________________________
 
                 }
             }
-    .No arquivo instructors.j, em baixo do "const db" escreva:
+    .No arquivo instructors.js, em baixo do "const db" escreva:
 
         const Instructor = require ('../models/Instructor')
 
     .Ainda no arquivo instructors.js, na função index, delete o conteudo e escreva:
-
         Instructor.all(function(instructors) {
             return res.render("instructors/index", {instructors})
     
@@ -725,3 +728,18 @@ __________________________ AJUSTES DE MEMBROS __________________________________
 
     .TESTAR - CADASTRAR NOVO MEMBRO
         
+
+
+
+
+    
++++++++++++++++++++++++ Ordenando dados do banco +++++++++++++++++++
+
+
+    .No arquivo Insctructor.js, no objeto ALL:
+
+        .Mude a parte do SELECT para:
+
+            SELECT *
+            FROM instructors
+            ORDER BY name ASC, function...(função matém igual)

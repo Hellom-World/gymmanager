@@ -357,8 +357,6 @@ ________________________________________________________________________________
 
         .Dentro da pasta "models" crie o script "Instructor.js"
 
-PAREI AQUI ESTOU AQUI AQUII
-
         .Dentro do (PRIMEIRA LETRA MAIUSCULA)"Instructor.js", escreva:
 
             module.exports = {
@@ -442,7 +440,7 @@ PAREI AQUI ESTOU AQUI AQUII
 
 
 
-
+PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUIIPAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUIIPAREI AQUI ESTOU AQUI AQUII
 
 +++++++++++++++++++++++ Buscando Registro unico na banco de dados +++++++++++++++++++
 

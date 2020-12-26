@@ -440,7 +440,7 @@ ________________________________________________________________________________
 
 
 
-PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUIIPAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUIIPAREI AQUI ESTOU AQUI AQUII
+
 
 +++++++++++++++++++++++ Buscando Registro unico na banco de dados +++++++++++++++++++
 
@@ -494,7 +494,7 @@ PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQUII PAREI AQUI ESTOU AQUI AQ
 
 
 
-    .No arquivo isntructors.js, na função edit escreva:
+    .No arquivo instructors.js, na função edit escreva:
 
         Instructor.find(req.params.id, function (instructor){
             if (!instructor) return res.send("Instructor no found!")
@@ -616,7 +616,7 @@ __________________________ AJUSTES DE MEMBROS __________________________________
 
             const Member = require('..models/Member')
 
-        .Copie e cole o module.exports do arquivo instructors.js para o memebers.js
+        .Copie e cole o module.exports do arquivo instructors.js para o members.js
 
             .faça um (ctrl + f) para mudar instructor por member.
                 ->DIFERENCIE MAIUSCULO DE MINUSCULO PARA A PRIMEIRA LETRA

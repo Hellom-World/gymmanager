@@ -36,7 +36,7 @@ module.exports = {
             instructor.age = age(instrutor.birth)
             instructor.services = instructor.services.split(",")
 
-            instructor.create_at = date(instructor.created_at).format
+            instructor.created_at = date(instructor.created_at).format
 
             return res.render("instructors/show", { instrutor })
         })

@@ -741,3 +741,16 @@ __________________________ AJUSTES DE MEMBROS __________________________________
             SELECT *
             FROM instructors
             ORDER BY name ASC, function...(função matém igual)
+
+
+
+
+
+
+
+
+
+
+
+__________________________ Relacionando Tabelas ___________________________________________________________
+                     .. part 1/2 Desafio 5.3

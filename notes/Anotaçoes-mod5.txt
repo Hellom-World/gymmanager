@@ -614,7 +614,7 @@ __________________________ AJUSTES DE MEMBROS __________________________________
 
         .Em baixo do "const {age, date}", escreva a linha:
 
-            const Member = require('..models/Member')
+            const Member = require('../models/Member')
 
         .Copie e cole o module.exports do arquivo instructors.js para o members.js
 

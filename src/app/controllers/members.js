@@ -35,16 +35,16 @@ module.exports = {
 
             member.birth = date(member.birth).birthDay
 
-            return res.render("members/show", { instrutor })
+            return res.render("members/show", { member })
         })
     },                
     edit(req, res){
         Member.find(req.params.id, function (member){
             if (!member) return res.send("Member no found!")
 
-            member.birth = date(instrutor.birth).iso
+            member.birth = date(member.birth).iso
 
-            return res.render("members/edit", { instrutor })
+            return res.render("members/edit", { member })
         })
     },   
     put(req, res){

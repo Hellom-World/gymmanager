@@ -782,6 +782,8 @@ __________________________ Relacionando Tabelas ________________________________
 
 
 
+PAAREI AQUI parei aqui
+
 +++++++++++++++++++++++ Unindo tabela com SQL join +++++++++++++++++++            
 
 - Crie mais um pouco de membros e instrutores para fazer o relacionamento
@@ -995,3 +997,169 @@ para:
     FROM members
     LEFT JOIN instructors ON (members.instructor_id = instructors.id)
     WHERE members.id = $1`
+
+
+
+
+
+
+
+
+__________________________ Filtros da Tabela ___________________________________________________________
+                     .. part 2/2 Desafio 5.3
+
+
+
+
+++++++++++++++++++++++ Estrutura do Filtro +++++++++++++++++++
+
+
+- Vamos adicionar um campo de filtrar por nome ou atendimento
+
+    - Configurando layout:
+
+        -Na pasta instructors abra o arquivo index.js
+            - exclua a linha:
+
+            <a href="/instructors/create">Nome<a/>
+
+            E No lugar dela adicione a linha:
+
+            <div class="header">
+                <a class="button" href="/instructors/create">Nome<a/>
+                <form action="/instructors" method="GET">
+                    <input
+                        type="text"
+                        name="filter"
+                        placeholder="filtrar por Nome"
+                    >
+                    <button type="submit">Filtrar</button>
+                </form>
+            </div>
+
+        -ATUALIZA A PAGINA PRA TESTAR
+
+    
+
+
+
+
+
+++++++++++++++++++++++ Estilizando a filtragem +++++++++++++++++++
+
+
+    -Aqui vamos configurar o CSS da filtragem
+
+        - Abra o arquivo styles.css
+            -No final dos conteudo escreva:
+
+
+/* FILTERS */
+.table-container .header {
+    display: grid;
+    grid-tamplete-columns: 1fr 1fr;
+    align-items: center;
+    margin-bottom: 32px;
+}        
+
+.table-container .header a {
+    margin:0;
+    width: 120px;
+}
+
+
+.table-container .header form {
+    display: grid;
+    grid-template-columns: 1fr 120px
+    align-items: center;
+    grid-gap: 8px;
+}
+
+.table-container .header form input {
+    border: 1px solid #eee;
+    padding: 4px 8px;
+    box-sizing: border-box;
+}
+
+.table-container .header form button {
+    margin:0;
+}
+
+
+
+
+
+
+
+++++++++++++++++++++++ Lógica da filtragem de dados +++++++++++++++++++
+
+
+ -No arquivo instructors.js
+
+    mude a função index() para: 
+
+    index(req, res) {
+        const { filter } = req.query
+
+        if ( filter ) {
+            Instructor.findBy(function(instructors){
+                return res.render("instructors/index", { instructors })
+            })
+        } else {
+            Instructor.all(function(instructors){
+                return res.render("instructors/index", { instructors })
+            })
+        }
+
+    },
+
+-No arquivo Instructors.js, abaixo da função "find()"
+
+    *escreva:
+
+        findBy(filter, callback) {
+            db.query(`
+            SELECT instructors.*, count(members) AS total_students
+            FROM instructors
+            LEFT JOIN members ON (instructors.id = members.instructors_id)
+            WHERE instructors.name ILIKE '%${filter}%'
+            GROUP BY instructors.id
+            ORDER BY total_students DESC`, function(err, results){
+                if(err) throw `Dtabase Error! ${err}`
+
+                callback(results.rows)
+            })   
+        }
+
+
+
+
+
+++++++++++++++++++++++ Filtro Flexivel com extensão OR do SQL +++++++++++++++++++
+
+
+    -Isso vai servir para filtrar Por Nome ou Atendimentpo
+
+        - No arquivo index.njk da pasta instructors, mude placeholder para:
+
+            placeholder="Nome ou Atendimento"
+
+        - Na função findBY do arquyivo Instructors.js
+
+            *Abaixo a linha "WHERE" Escreva a linha:
+
+                OR instructors.services ILIKE '%${filter}%' 
+
+    -Para manter o filter no value:
+
+        -No if do filter, no aquivo instructors.js:
+
+            -mude o return para:
+
+                return res.render("instructors/index", { instructors, filter })
+
+        -No arquivo index.njk da pasta instructors,
+
+            *acrescente no input:
+
+                value={{filter}}

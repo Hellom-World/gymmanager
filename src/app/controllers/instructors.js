@@ -1,4 +1,4 @@
-const { age } = require('../../lib/utils')
+const { age, date } = require('../../lib/utils')
 const db = require('../../config/db')
 const Instructor = require ('../models/Instructor')
 
@@ -33,21 +33,21 @@ module.exports = {
         Instructor.find(req.params.id, function (instructor){
             if (!instructor) return res.send("Instructor no found!")
 
-            instructor.age = age(instrutor.birth)
+            instructor.age = age(instructor.birth)
             instructor.services = instructor.services.split(",")
 
             instructor.created_at = date(instructor.created_at).format
 
-            return res.render("instructors/show", { instrutor })
+            return res.render("instructors/show", { instructor })
         })
     },                
     edit(req, res){
         Instructor.find(req.params.id, function (instructor){
             if (!instructor) return res.send("Instructor no found!")
 
-            instructor.birth = date(instrutor.birth).iso
+            instructor.birth = date(instructor.birth).iso
 
-            return res.render("instructors/edit", { instrutor })
+            return res.render("instructors/edit", { instructor })
         })
     },   
     put(req, res){
@@ -64,10 +64,10 @@ module.exports = {
         })        
     },   
     delete(req, res){
-        Instructor.delete(req.body, function(){
+        Instructor.delete(req.body.id, function(){
             return res.redirect(`/instructors`)
         })
-    }   
+    },
 }
 
                     

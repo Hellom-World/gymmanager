@@ -448,13 +448,13 @@ ________________________________________________________________________________
 
     .No arquivo Instructor.js crie o objeto:
 
-        find(id, callback) {`
-            SELECT *
+        find(id, callback) {
+            db.query(`SELECT *
             FROM instructors
             WHERE id = $1`, [id], function(err, results){
                 if(err) return res.send("Database Error!")
                 callback(results.rows[0])
-            }
+            })
         }
     
     .No arquivo instructors.js na função SHOW, escreva:
@@ -513,7 +513,7 @@ ________________________________________________________________________________
                 name=($2),
                 birth=($3),
                 gender=($4),
-                services=($5),
+                services=($5)
             WHERE id =($6)
             `
             const values = [
@@ -734,7 +734,7 @@ __________________________ AJUSTES DE MEMBROS __________________________________
 +++++++++++++++++++++++ Ordenando dados do banco +++++++++++++++++++
 
 
-    .No arquivo Insctructor.js, no objeto ALL:
+    .No arquivo Instructor.js, no objeto ALL:
 
         .Mude a parte do SELECT para:
 
@@ -750,7 +750,248 @@ __________________________ AJUSTES DE MEMBROS __________________________________
 
 
 
-
+Estudando
 
 __________________________ Relacionando Tabelas ___________________________________________________________
                      .. part 1/2 Desafio 5.3
+
+
+
+
+
++++++++++++++++++++++++ Entendendo os relacionamentos da aplicação +++++++++++++++++++            
+
+- A ideia é fazer o membro ter um instrutor.. para isso:
+
+    * Abra o postbird e crie uma nova coluna na tabela members:
+
+        Name: instructor_id
+        type: integer
+        Allow null
+
+    * crie novos membros
+
+        -Abra o postbird e vai até a tabela members
+        -acrescenta o id do instrutor na coluna intructor_id
+
+
+
+
+
+
+
+
+
++++++++++++++++++++++++ Unindo tabela com SQL join +++++++++++++++++++            
+
+- Crie mais um pouco de membros e instrutores para fazer o relacionamento
+
+- No postbird, na aba Query escreva:
+
+    SELECT *
+    FROM instructors
+
+- Selecione isso que foi escrito e de "run Query".
+    *Tem que aparecer os dados dos instrutores
+
+-Para ordenar as informações pelo id, escreva:
+
+    SELECT *
+    FROM instructors
+    ORDER BY id
+
+-ROda da Query o cod para unir as Tabelas:
+
+    SELECT *
+    FROM instructors
+    LEFT JOIN members ON (members.instructor_id = instructors.id)
+
+    - Repare ao rodar se aparece as duas tabelas relacionadas
+
+-Agora rode a Query:
+
+    SELECT *
+    FROM instructors
+    LEFT JOIN members ON (members.instructor_id = instructors.id)
+    ORDER BY id
+
+    -Note que dará erro
+    -Para corrigir isso deve-se dizer qual id se deseja, dessa forma:
+
+        SELECT *
+        FROM instructors
+        LEFT JOIN members ON (members.instructor_id = instructors.id)
+        ORDER BY instructors.id
+
+        * tambem pode ser ORDER BY members.id
+
+
+
+
+
+
+
+
+++++++++++++++++++++++ Agrupando e contando colunas no SQL +++++++++++++++++++
+
+
+
+-Para relacionar uma unica informação na tabela rode a Query:
+
+    SELECT instructors.*, members.name AS member_name
+    FROM instructors
+    LEFT JOIN members ON (members.instructor_id = instructors.id)
+    
+
+-Não queremos a tabela repetindo id... para isso:
+
+    SELECT instructors.*, count(members) AS total_students
+    FROM instructors
+    LEFT JOIN members ON (members.instructor_id = instructors.id)
+    GRUP BY instructors.id
+    
+
+
+
+
+
+
+++++++++++++++++++++++ Aplicando coluna total students +++++++++++++++++++
+
+
+-No arquivo "index.njk" na pasta "instructors", mude a parte:
+
+    <thead>
+        <tr>
+            <th>Instructor</th>
+            <th>Atendimento</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+
+Para:
+
+    <thead>
+        <tr>
+            <th>Instructor</th>
+            <th>Atendimento</th>
+            <th>Alunos</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+
+
+-Ainda no arquivo "index.njk" mude a parte:
+
+    <tr>
+        <td>
+            <span da imagem>
+        </td>
+        <td>{{instructor.services}}</td>
+    </tr>
+
+Para:
+
+    <tr>
+        <td>
+            <span da imagem>
+        </td>
+        <td>{{instructor.services}}</td>
+        <td>{{instructor.total_students}}</td>
+    </tr>
+
+
+-Ainda no arquivo "index.njk", Na parte all(callback):
+
+    -Mude a parte 
+
+        SELECT * 
+        FROM instructors 
+        ORDER BY name ASC`
+
+    PARA:
+
+        SELECT instructors.*, count(members) AS total_students
+        FROM instructors
+        LEFT JOIN members ON (members.instructor_id = instructors.id)
+        GRUP BY instructors.id
+        ORDER BY total_students DESC`
+
+
+
+
+
+
+
+
+
+++++++++++++++++++++++ Criando seleção de instrutores +++++++++++++++++++
+
+
+-No Arquivo "fields.njk" na pasta "members"
+
+    -Em cima da linha:
+
+        <button type="submit">Salvar</button>
+
+    escreva:
+
+    <div class="item">
+        <div>Instrutor</div>
+        <div>
+            <select name="instructor">
+                {% for instructor in instructorOptions%}
+                <option value="{{instructor.id}}" {% if member.instructor_id == instructor.id %}selected{% endif %}>
+                    {{instructor.name}}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+- No arquivo Member.js, dentro no "module.exports" e abaixo a linha "delete(){}", escreva:
+
+    instructorSelectOptions(callback) {
+        db.query(`SELECT name, id FROM instructors`, function(err, results) {
+            if (err) throw 'Database Error!'
+
+            callback (results.rows)
+        })
+    }
+
+- No arquivo member.js reescreva a linha "create" para:
+
+    create(req, res){
+
+        Member.instructorSelectOptions(function(options){
+            return res.render('members/create', {instructorOptions: options})
+        })
+    }
+
+
+
+
+
+
+++++++++++++++++++++++ Exibindo instrutor de um membro +++++++++++++++++++
+
+
+
+-No arquivo "show.njk" da pasta "members", abaixo da div.Altura, escreva:
+
+    <div class= "item">
+        <div>Aluno de</div>
+        <div>{{ member.instructor_name }}</div>
+    </div>
+
+-No arquivo Member.js, na linha "find()", reescreva:
+
+    SELECT *
+        FROM members
+        WHERE id = $1`
+
+para:
+
+    SELECT members.*, instructor.name AS instructor_name
+    FROM members
+    LEFT JOIN instructors ON (members.instructor_id = instructors.id)
+    WHERE members.id = $1`

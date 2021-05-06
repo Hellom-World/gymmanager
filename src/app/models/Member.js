@@ -44,13 +44,13 @@ module.exports = {
         })
     },
 
-    find(id, callback) {`
-        SELECT *
+    find(id, callback) {
+        db.query(`SELECT *
         FROM members
         WHERE id = $1`, [id], function(err, results){
             if(err) throw `database Error! ${err}`
             callback(results.rows[0])
-        }
+        })
     },
     update(data, callback) {
         const query = `

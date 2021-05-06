@@ -781,9 +781,6 @@ __________________________ Relacionando Tabelas ________________________________
 
 
 
-
-PAAREI AQUI parei aqui
-
 +++++++++++++++++++++++ Unindo tabela com SQL join +++++++++++++++++++            
 
 - Crie mais um pouco de membros e instrutores para fazer o relacionamento
@@ -903,7 +900,7 @@ Para:
     </tr>
 
 
--Ainda no arquivo "index.njk", Na parte all(callback):
+-No arquivo "instructors.js", Na parte all(callback):
 
     -Mude a parte 
 
@@ -916,7 +913,7 @@ Para:
         SELECT instructors.*, count(members) AS total_students
         FROM instructors
         LEFT JOIN members ON (members.instructor_id = instructors.id)
-        GRUP BY instructors.id
+        GROUP BY instructors.id
         ORDER BY total_students DESC`
 
 
@@ -948,7 +945,7 @@ Para:
                 </option>
                 {% endfor %}
             </select>
-        </div>
+    </div>
 
 - No arquivo Member.js, dentro no "module.exports" e abaixo a linha "delete(){}", escreva:
 
@@ -963,7 +960,6 @@ Para:
 - No arquivo member.js reescreva a linha "create" para:
 
     create(req, res){
-
         Member.instructorSelectOptions(function(options){
             return res.render('members/create', {instructorOptions: options})
         })
@@ -993,7 +989,7 @@ Para:
 
 para:
 
-    SELECT members.*, instructor.name AS instructor_name
+    SELECT members.*, instructors.name AS instructor_name
     FROM members
     LEFT JOIN instructors ON (members.instructor_id = instructors.id)
     WHERE members.id = $1`
@@ -1026,7 +1022,7 @@ __________________________ Filtros da Tabela ___________________________________
             E No lugar dela adicione a linha:
 
             <div class="header">
-                <a class="button" href="/instructors/create">Nome<a/>
+                <a class="button" href="/instructors/create">Nome</a>
                 <form action="/instructors" method="GET">
                     <input
                         type="text"
@@ -1044,7 +1040,7 @@ __________________________ Filtros da Tabela ___________________________________
 
 
 
-
+PAREI AQUI parei aqui
 ++++++++++++++++++++++ Estilizando a filtragem +++++++++++++++++++
 
 
@@ -1102,7 +1098,7 @@ __________________________ Filtros da Tabela ___________________________________
         const { filter } = req.query
 
         if ( filter ) {
-            Instructor.findBy(function(instructors){
+            Instructor.findBy(filter, function(instructors){
                 return res.render("instructors/index", { instructors })
             })
         } else {
@@ -1163,3 +1159,6 @@ __________________________ Filtros da Tabela ___________________________________
             *acrescente no input:
 
                 value={{filter}}
+
+
+    

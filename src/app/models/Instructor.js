@@ -35,7 +35,8 @@ module.exports = {
             data.gender,
             data.services,
             date(data.birth).iso,
-            date(Date.now()).iso
+            date(Date.now()).iso,
+            
         ]
 
         db.query(query, values, function(err, results){

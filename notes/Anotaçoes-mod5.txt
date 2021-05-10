@@ -750,7 +750,6 @@ __________________________ AJUSTES DE MEMBROS __________________________________
 
 
 
-Estudando
 
 __________________________ Relacionando Tabelas ___________________________________________________________
                      .. part 1/2 Desafio 5.3
@@ -1162,3 +1161,211 @@ PAREI AQUI parei aqui
 
 
     
+
+
+
+
+
+
+_____________________________________PAGINAÇÃO________________________________________________
+
+
+
+
+
+++++++++++++++++++++++ Entendendo a Lógica da paginação +++++++++++++++++++
+
+-Ele explicou, tinha logica.. mas não tinha codigo (assistir video)
+
+
+
+
+
+
+++++++++++++++++++++++ Estruturando os parametros para paginação +++++++++++++++++++
+
+
+-No arquivo instructors.js, na função index:
+
+    -Comente o conteudo todo da função
+    -Agora escreva isso por cima do cod. comentado:
+
+        let {filter, page, limit } = req.query
+
+        page = page || 1
+        limit = limit || 2
+        let offset = limit * (page - 1)
+
+        const params = {
+            filter,
+            page,
+            limit,
+            offset,
+            callback(instructors){
+                return res.render("instructors/index", { instructors, filter })
+            }
+        }
+
+        instructors.paginate(params)
+
+-No arquivo Instructor.js, em baixo da função delete(), escreva:
+
+    paginate(params) {}
+
+
+
+
+
+
+
+
+
+++++++++++++++++++++++ Queries dinâmicas +++++++++++++++++++
+
+
+
+
+-No arquivo Instructor.js, mude a função paginate() para:
+
+    paginate(params) {
+        const {filter, limit, offset, callback } = params
+
+        let query = `
+        SELECT instructors.*, count(members) as total_students
+        FROM instructors
+        LEFT JOIN members ON (instructors.id = members.instructor_id)`
+
+        if ( filter ) {
+            query = `${query}
+            WHERE instructors.name ILIKE '%${filter}%'
+            OR instructors.services ILIKE '%${filter}%'
+            `
+        }
+
+        query = `${query}
+        GROUP BY instructors.id limit $1 OFFSET $2
+        `
+
+        db.query(query, [limit, offset], function(err, results){
+            if (err) throw `Database Error! ${err}`
+
+            callback(results.rows)
+        })
+    }
+
+
+
+
+
+
+++++++++++++++++++++++ Algoritmo de paginação no front I +++++++++++++++++++
+
+
+
+-No fim do conteudo do arquivo "script.js" escreva:
+
+    // paginação
+    // totalPages = 20
+    // SelectedPage = 15
+    // [1, ..., 13, 14, 15, 16, 17, ..., 20]
+
+    let totalPages = 20,
+        SelectedPage = 15,
+        pages = []
+
+    for(let currentPage = 1; currentPage <= totalPages; currentPage++){
+
+        if(currentPage == 1 || currentPage == totalPages) {
+            pages.push(currentPage)
+        }
+    }
+
+    console.log(params)
+
+
+
+
+++++++++++++++++++++++ Algoritmo de paginação no front II +++++++++++++++++++
+
+
+
+-No fim do conteudo do arquivo "script.js" Atualize:
+
+    // paginação
+    // totalPages = 20
+    // SelectedPage = 15
+    // [1, ..., 13, 14, 15, 16, 17, ..., 20]
+
+    let totalPages = 20,
+        SelectedPage = 15,
+        pages = []
+
+    for(let currentPage = 1; currentPage <= totalPages; currentPage++){
+
+        const firstAndLastPage = currentPage == 1 || currentPage == total
+        const pagesAfterSelectedPage = currentPage <= selectedPage + 2
+        const pagesBeforeSelectedPage = currentPage >= selecetdPage - 2
+
+
+        if(firstAndLastPage == 1 || pagesBeforeSelectedPage && pagesAfterSelectedPage) {
+            pages.push(currentPage)
+        }
+    }
+
+    console.log(params)
+
+
+
+
+
+++++++++++++++++++++++ Algoritmo de paginação no front III +++++++++++++++++++
+
+
+
+-No fim do conteudo do arquivo "script.js" Atualize:
+
+    // paginação
+    // totalPages = 20
+    // SelectedPage = 15
+    // [1, ..., 13, 14, 15, 16, 17, ..., 20]
+
+    let totalPages = 20,
+        SelectedPage = 15,
+        pages = [],
+        oldPage
+
+    for(let currentPage = 1; currentPage <= totalPages; currentPage++){
+
+        const firstAndLastPage = currentPage == 1 || currentPage == total
+        const pagesAfterSelectedPage = currentPage <= selectedPage + 2
+        const pagesBeforeSelectedPage = currentPage >= selecetdPage - 2
+
+
+        if(firstAndLastPage == 1 || pagesBeforeSelectedPage && pagesAfterSelectedPage) {
+            if (oldPage && currentPage - oldPage > 2){
+                pages.push("...")
+            }
+
+            if (oldPage && currentPage - oldPage == 2) {
+                pages.push(oldPage + 1)
+            }
+
+            pages.push(currentPage)
+            
+            oldPage = currentPage
+        }
+    }
+
+    console.log(params)
+
+
+
+
+
+++++++++++++++++++++++ Estruturando dados para paginação no front +++++++++++++++++++
+
+
+
+
+
+

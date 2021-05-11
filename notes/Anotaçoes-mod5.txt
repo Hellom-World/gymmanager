@@ -1365,7 +1365,64 @@ _____________________________________PAGINAÇÃO________________________________
 ++++++++++++++++++++++ Estruturando dados para paginação no front +++++++++++++++++++
 
 
+- No arquivo "scripts.js" vamos colocar as ultimas linhas em um função:
+
+
+
+    function paginate (selectedPage, totalPages) {
+        let pages = [],
+        oldPage
+
+        for(let currentPage = 1; currentPage <= totalPages; currentPage++){
+
+            const firstAndLastPage = currentPage == 1 || currentPage == total
+            const pagesAfterSelectedPage = currentPage <= selectedPage + 2
+            const pagesBeforeSelectedPage = currentPage >= selecetdPage - 2
+
+
+            if(firstAndLastPage == 1 || pagesBeforeSelectedPage && pagesAfterSelectedPage) {
+                if (oldPage && currentPage - oldPage > 2){
+                    pages.push("...")
+                }
+
+                if (oldPage && currentPage - oldPage == 2) {
+                    pages.push(oldPage + 1)
+                }
+
+                pages.push(currentPage)
+                
+                oldPage = currentPage
+            }
+        }
+        return pages    
+    }
 
 
 
 
+-No arquivo "instructor.js" delete a parte comentada e troque esse conteudo:
+
+
+    let {filter, page, limit } = req.query
+
+        page = page || 1
+        limit = limit || 2
+        let offset = limit * (page - 1)
+
+        const params = {
+            filter,
+            page,
+            limit,
+            offset,
+            callback(instructors){
+
+                const pagination = {
+                    filter,
+                    total,
+                    page
+                }
+                return res.render("instructors/index", { instructors })
+            }
+        }
+
+        instructors.paginate(params)

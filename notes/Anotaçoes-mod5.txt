@@ -1380,7 +1380,7 @@ _____________________________________PAGINAÇÃO________________________________
 
             const firstAndLastPage = currentPage == 1 || currentPage == total
             const pagesAfterSelectedPage = currentPage <= selectedPage + 2
-            const pagesBeforeSelectedPage = currentPage >= selecetdPage - 2
+            const pagesBeforeSelectedPage = currentPage >= selectedPage - 2
 
 
             if(firstAndLastPage == 1 || pagesBeforeSelectedPage && pagesAfterSelectedPage) {

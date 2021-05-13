@@ -2,6 +2,7 @@ const currentPage = location.pathname
 const menuItems = document.querySelectorAll("header .links a")
 
 console.log(currentPage)
+
 for (item of menuItems) {
 	if (currentPage.includes(item.getAttribute("href"))) {			
         item.classList.add("active")
@@ -15,13 +16,13 @@ for (item of menuItems) {
 
     function paginate (selectedPage, totalPages) {
         let pages = [],
-        oldPage
+        	oldPage
 
         for(let currentPage = 1; currentPage <= totalPages; currentPage++){
 
-            const firstAndLastPage = currentPage == 1 || currentPage == total
+            const firstAndLastPage = currentPage == 1 || currentPage == totalPages
             const pagesAfterSelectedPage = currentPage <= selectedPage + 2
-            const pagesBeforeSelectedPage = currentPage >= selecetdPage - 2
+            const pagesBeforeSelectedPage = currentPage >= selectedPage - 2
 
 
             if(firstAndLastPage == 1 || pagesBeforeSelectedPage && pagesAfterSelectedPage) {
@@ -40,26 +41,33 @@ for (item of menuItems) {
         }
         return pages    
 	}
-	
-	const pagination = document.querySelector(".paginate")
-	const filter = pagination.dataset.filter
-    const page = +pagination.dataset.page;
-    const total = +pagination.dataset.total;
-
-	const pages = paginate(page, total)
-
-    let elements = ""
-
-    for (let page of pages) {
-        if (string(page).includes("...")) {
-            elements += `<span>${page}</span>`
-        } else {
-            if( filter ) {
-                elements += `<a href= "?page=${page}&filter=${filter}">${page}</a>`
+    
+    function createPagination(pagination) {
+    
+        const filter = pagination.dataset.filter
+        const page = +pagination.dataset.page
+        const total = +pagination.dataset.total
+        const pages = paginate(page, total)
+    
+        let elements = ""
+    
+        for (let page of pages) {
+            if (String(page).includes("...")) {
+                elements += `<span>${page}</span>`
             } else {
-                elements += `<a href= "?page=${page}">${page}</a>`
-            }
-        }    
+                if( filter ) {
+                    elements += `<a href= "?page=${page}&filter">${page}</a>`
+                } else {
+                    elements += `<a href= "?page=${page}">${page}</a>`
+                }
+            }    
+        }
+    
+        pagination.innerHTML = elements
     }
-
-    pagination.innerHTML = elements
+    
+    const pagination = document.querySelector(".pagination")
+    
+    if (pagination) {
+        createPagination(pagination)
+    }

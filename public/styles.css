@@ -243,8 +243,6 @@ tbody tr td:last-child a,
     margin:0;
     width: 120px;
 }
-
-
 .table-container .header form {
     display: grid;
     grid-template-columns: 1fr 120px;
@@ -261,3 +259,34 @@ tbody tr td:last-child a,
 .table-container .header form button {
     margin:0;
 }
+
+
+    /* Paginação */
+
+.table-container {
+    display: grid;
+    grid-template: 64px 1fr 16px / 1fr;
+}
+
+.table-container .header {
+    margin: 0;
+    align-self: start;
+}
+
+.table-container .pagination {
+    margin: 0;
+    align-self: end;
+    justify-self: center;
+}
+
+    .pagination a,
+    .pagination span {
+        color: var(--rocketseat-color);
+        text-decoration: none;
+        margin-right: 16px;
+    }
+
+    .pagination a:houver {
+        filter: brightness(0.3);
+        border-bottom: 1px solid var(--rocketseat-color)
+    }

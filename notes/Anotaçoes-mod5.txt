@@ -1171,7 +1171,7 @@ PAREI AQUI parei aqui
 
 
 _____________________________________PAGINAÇÃO________________________________________________
-
+                                Desafio
 
 
 
@@ -1209,7 +1209,7 @@ _____________________________________PAGINAÇÃO________________________________
             }
         }
 
-        instructors.paginate(params)
+        Instructor.paginate(params)
 
 -No arquivo Instructor.js, em baixo da função delete(), escreva:
 
@@ -1428,7 +1428,7 @@ _____________________________________PAGINAÇÃO________________________________
             }
         }
 
-        instructors.paginate(params)
+        Instructor.paginate(params)
 
 
 
@@ -1568,6 +1568,8 @@ paginate(params) {
 
 -No fim do conteudo, escreva:
 
+    //Paginação
+
     .table-container {
         display: grid;
         grid-template: 64px 1vr 16px / 1fr;
@@ -1634,7 +1636,7 @@ paginate(params) {
 
 -No arquivo "scripts.js" acrescente a seguinte linha
 
-    -entre o "const pagination" e "c"onst page":
+    -entre o "const pagination" e "const page":
 
     const filter = pagination.dataset.filter
 

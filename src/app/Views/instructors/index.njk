@@ -33,6 +33,11 @@
 			</tr>
 			{% endfor %}
 		<tbody>
-	</table>        
+	</table>     
+	<div class="pagination"
+        data-page={{pagination.page}}
+        data-total={{pagination.total}} 
+        data-filter={{filter}}
+    ></div>
 </div>
 {% endblock %}

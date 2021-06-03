@@ -76,8 +76,8 @@ __________________________________________________MODELANDO DADOS_______________
 
 		Table products {
 			id int [pk, increment]
-			category_id int [unique]
-			user_id int [unique]
+			category_id int [not null]
+			user_id int 
 			name text [not null]
 			description text [not null]
 			old_price int
@@ -97,7 +97,7 @@ __________________________________________________MODELANDO DADOS_______________
 			id int [pk, increment]
 			name text
 			path text [not null]
-			product_id int [unique]
+			product_id int 
 		} 
 
 
@@ -253,7 +253,7 @@ __________________________________________________LAYOUT BASICO DA APLICAÇÃO__
 
 		:root {
 			--primary-color: #fd951f;
-			--secundary-color: #1fd4fd;
+			--secundary-color: #1f83fd;
 
 		}
 		*{
@@ -489,7 +489,7 @@ __________________________________________________LAYOUT DO FORMULARIO DE CADAST
 		</div>
 
 		<div class="item">
-			<div>Name</div>
+			<div>Título</div>
 			<div>
 				<input
 					type="text"
@@ -539,7 +539,7 @@ __________________________________________________LAYOUT DO FORMULARIO DE CADAST
 			</div>
 		</div>
 
-		{% if product.status %}
+		{% if (product.status == '1') or (product.status == 0)%}
 		<div class="item">
 			<div>Disponível ?</div>
 			<div>
@@ -745,3 +745,565 @@ __________________________________________________LAYOUT DO FORMULARIO DE CADAST
 
 
 
+
+
+__________________________________________________CADASTRANDO PRODUTOS_________________________________________________________
+
+
+
+---------- Conhecendo Promises --------
+
+-Abra o arquivo routes.js
+
+	-Abaixo da rota.create, escreva a rota:
+
+		routes.post('products', ProductController.post)
+
+-Abra o arquivo ProductController.js
+
+	-Abaixo da função create crie a função:
+
+		post(req, res) {
+			
+		}
+
+-Dentro da pasta models, crie o arquivo "Category.js"
+
+	-Dentro do arquiv "Category.js", escreva:
+
+		const db = require('../../config/db')
+
+		module.exports = {
+			all(){
+				return db.query(´
+					SELECT * FROM categories
+				´)
+			}
+		}
+
+-No arquivo "ProductController.js"
+
+	-Acima do module.exports = {}, escreva
+
+		const Category = require('../models/Category')
+
+	-Reescreva a função create() para:
+
+		create(req, res){
+			//pegar categorias
+			Category.all()
+			.then(function(results){
+				
+				const categories = results.rows
+				return res.render("products/create.njk", { categories })
+			}).catch(function(err){
+				throw new Error(err)
+			})
+
+			
+		}
+
+
+
+
+
+
+---------- Conhecendo async-await--------
+
+-Abra o postbird e na tabela categorias
+
+	-crie a coluna id= 1 name= Eletrônicos
+	-crie a coluna id= 2 name= Comida
+
+-Salva, e da o "npm start" no terminal
+
+	-Tem que aparecer opçoes no select de create
+
+-Abra a pasta models e crie o arquivo "Product.js"
+	
+	-Dentro do arquivo Product.js, escreva:
+
+		const db = require('../../config/db')
+
+		module.exports = {
+
+			create(data) {
+				const query = `
+					INSERT INTO products {
+						category_id,
+						user_id,
+						name,
+						description,
+						old_price,
+						price,
+						quantity,
+						status
+					} VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+					RETURNING id
+				`
+				const values = [
+					data.category_id,
+					1,
+					data.name
+					data.description,
+					data.old_price,
+					data.price,
+					data.quantity,
+					data.status,
+				]
+
+				return db.query(query, values)
+			},
+		}
+
+-No arquivo ProductController.js
+
+	-Abaixo da linha "const Category", escreva:
+
+		const Product = require('../models/Product')
+
+	-reescreva a função post(), para:
+
+		async post(req, res) {
+			const keys = Object.keys(req.body)
+
+			for(key of keys) {
+				if (req.body[key] == "") {
+					return res.send('Please, fill all fields!')
+				}
+			}
+
+			let results = await Product.create(req.body)
+			const productId = results.rows[0].id
+
+			results = await Category.all()
+			const categories = results.rows
+
+			return res.render("products/create.njk", { productId, categories })
+		}
+
+
+	-abra o arquivo create.njk da pasta products
+
+		-No h3 da div.header, escreva
+
+			>Cadastrar produto {{productId}}<
+
+		-abra /products/create e crie um novo produto.
+
+			-repare se funciona
+
+
+
+
+
+
+
+
+---------- Substituindo textos com expressão regular--------
+
+
+-Abra o arquivo scripts.js e dentro dele escreva:
+
+	const input = document.querySelector('input[name="price"]')
+	input.addEventListener("keydown", function(e){
+		
+
+		setTimeout(function() {
+			let { value } = e.target
+
+			value = value.replace(/\D/g, "")
+
+			e.target.value = value
+		}, 1)
+	})
+
+
+
+
+
+
+
+---------- Formatando Moedas--------
+
+-Abra o arquivo scripts.js 
+
+	-reescreva a função setTimeout para:
+
+	setTimeout(function(){
+		let { value } = e.target
+
+		value = value.replace(/\D/g,"")
+
+		value = new Intl.NumberFormat('pt-BR', {
+			style: 'currency',
+			currency: 'BRL'
+		}).format(value/100)
+
+		e.target.value = value
+		
+	}, 1)
+
+
+
+
+
+
+
+
+---------- Criando estrategia de mascara de campo--------
+
+
+-Abra o arquivo scripts.js, deleta tudo, e escreva:
+
+	const Mask = {
+		apply(input, func) {
+			setTimeout (function(){
+				input.value = Mask[func] (input.value)
+			}, 1)
+		},
+
+		formatBRL(value){
+
+			value = value.replace(/\D/g,"")
+
+			return new Intl.NumberFormat('pt-BR', {
+				style: 'currency',
+				currency: 'BRL'
+			}).format(value/100)	
+		}
+	}
+
+-Abra o arquivo fields.njk da pasta products
+
+	-Substitua a parte comentada:
+
+		{# Faremos uma mascara de dinheiro #} 
+
+		Por
+
+		onkeydown"Mask.apply(this, 'formatBRL')"
+
+
+-Testar pra ver se funciona kkk
+
+
+
+
+
+
+
+
+
+
+---------- Corrigindo falha da modelagem de dados--------
+
+
+-No arquivo Product.js, mude o "const values" para
+
+
+	data.price = data.prince.replace(/\D/g, "")
+	const values = [
+		data.category_id,
+		data.user_id || 1,
+		data.name
+		data.description,
+		data.old_price || data.price,
+		data.price,
+		data.quantity,
+		data.status || 1,
+	]
+
+-rodar "npm star" no terminal
+-Criar um novo produto
+
+
+
+
+
+
+
+
+
+
+
+
+
+__________________________________________________ATUALIZANDO E EXCLUINDO PRODUTOS_________________________________________________________
+
+
+
+-----------------Formulario de Atualização-------------
+
+-Abra o arquivo routes.js
+
+	.Abaixo da routes.get'create', crie a route:
+
+		routes.get('/products/:id/edit', ProductController.edit)
+
+
+-No arquivo ProductController.js
+
+	-deleta a função post e coloque essas:
+
+		async post(req, res) {
+			const keys = Object.keys(req.body)
+
+			for(key of keys) {
+				if (req.body[key] == ""){
+					return res.send('Please, fill all fields!')
+				}
+			}
+
+			let results = await Product.create(req.body)
+			const productId = results.rows[0].id
+
+			return res.redirect(`/products/${productId}`)
+		},
+		async edit(req, res) {
+			let results = await Product.find(req.params.id)
+			const product = results.rows[0]
+
+			if (!product) return res.send("Product not found!")
+			results categories = results.rows
+
+
+			return res.render("products/edit.njk", { product, categories})
+		},
+
+
+-Dentro do arquivo Product.js
+
+	-abaixo da função create, escreva:
+
+	find(id){
+		return db.query('SELECT * FROM' products WHERE id = $1', [id])
+	}
+
+-Na pasta products crie o arquivo, edit.njk
+
+	-No arquivo edit.njk, escreva:
+
+		{% extends "layout.njk" %}
+		
+		{% block content %}
+		<section class="container form">
+			<form method="POST" action="/products?_method=PUT">
+				<div class="header">
+					<h3>Editar Produto {{productId}}</h3>
+				</div>
+				<div class="fields">
+					{% include 'products/fields.njk'%}
+					<input
+						type="hidden"
+						name="id"
+						value="product.id">
+				</div>
+
+				<button class="button edit" type="submit">Atualizar</button>
+			</form>
+			<form id="form-delete" action="products?_method=DELETE" method="post">
+				<input type="hidden" name="id" value="{{product.id}}">
+				<button class="button delete" type="submit">Deletar</button>
+			</form>
+		</section>
+
+		<script>
+
+			const formDelete = document.querySelector("#form-delete")
+			formDelete.addEventListener("submit", function(event){
+				const confirmation = confirm("Deseja Deletar?")
+				if(!confirmation){
+				event.preventDefault()
+				}
+			})
+				
+		</script>
+
+		{% endblock content %}
+		
+
+- TESTAR!!
+
+
+
+
+
+-----------------Formatando preço dos produtos-------------
+
+-Abra o arquivo "utils.js"
+
+	-Abaixo da função date(), escreva
+
+		formatPrice(price) {
+			return new Intl.NumberFormat('pt-BR', {
+				style: 'currency',
+				currency: 'BRL'
+			}).format(price/100)				
+		}
+
+-Abra o arquivo ProductController.js 
+
+	-Escreva acima do "const Category":
+
+		const { formatPrice } = require('../../lib/ultis')
+
+	-Dentro da funçao edit()
+
+		-Acima da linha:
+
+		results = await Category.all()
+
+		escreva:
+
+			product.old_price = formatPrice(product.old_price)
+			product.price = formatPrice(product.price)
+
+
+
+
+
+
+-----------------Estilizando botoes de Atualizar e Deletar-------------
+
+
+
+-Abra o arquivo "styles.css"
+
+	-Abaixo da tag ".button:hover{}", escreva:
+
+		.button.edit {
+			background-color: var(--secundary-color);
+		}
+		.button.delete {
+			background-color: lightgray;
+		}
+
+		.button.edit:hover {
+			background-color: #065ac1;
+		}
+		.button.delete:hover {
+			background-color: rgb(223, 62, 62);
+		}
+
+
+	-Acima da tag "form .fields{}", escreva:
+
+		form .item span {
+			padding: 8px 16px:
+			background-color: var(--primary-color);
+			border-radius: 16px;
+			color: #white;
+			margin-right: 4px;
+			margin-top: 8px;
+			display: inline-block;
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: 12px;
+		}
+
+
+
+
+
+
+-----------------Funcionalidade de Atualização de produtos-------------
+
+
+-Abra o arquivo "routes.js"
+
+	-Abaixo da route.post, escreva:
+
+		routes.put('/products', ProductController.put)
+
+-Abra o arquivo "ProductController.js"
+
+	-Abaixo da função edit(), escreva:
+
+		async put(req, res){
+			const keys = Object.keys(req.body)
+
+			for(key of keys) {
+				if (req.body[key] == "") {
+					return res.send('Please, fill all fields!')
+				}
+			}	
+
+			req.body.price = req.body.price.replace(/\D/g,"")
+
+			if (req.body.old_price != req.body.price){
+				const oldProduct = await Product.find(req.body.id)
+				req.body.old_price = oldProduct.rows[0].price
+			}		
+
+			await Product.update(req.body)
+
+			return res.redirect(`/products/${req.body.id}/edit`)
+		}
+
+-Abra o arquivo "Product.js"
+
+	-Abaixo da função find(), escreva:
+
+		update(data) {
+			const query = `
+				UPDATE products SET
+					category_id=($1),
+					user_id=($2),
+					name=($3),
+					description =($4),
+					old_price =($5),
+					price =($6),
+					quantity =($7),
+					status = ($8)
+				WHERE id = $9
+			`
+
+			const values = [
+				data.category_id,
+				data.user_id,
+				data.name,
+				data.description,
+				data.old_price,
+				data.price,
+				data.quantity,
+				data.status,
+				data.id
+			]
+
+			return db.query(query, values)
+		}
+
+
+
+
+
+
+-----------------Excluindo produtos-------------
+
+
+
+-Abra o arquivo "routes.js"
+
+	-Abaixo da route.put, escreva:
+
+		routes.delete('/products', ProductController.delete)
+
+
+-Abaixo da função put(), escreva:
+
+		async delete(req, res){
+			await Product.delete(req.body.id)
+
+			return res.redirect('/products/create')
+		}
+
+
+-Abra o arquivo "Product.js"
+
+	-Abaixo da função update(), escreva:
+
+		delete(id) {
+			
+			return db.query('DELETE FROM products WHERE id = $1', [id])
+		}

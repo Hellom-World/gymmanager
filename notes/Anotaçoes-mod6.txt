@@ -1,0 +1,747 @@
+
+
+__________________________________________________MODELANDO DADOS_________________________________________________________
+
+
+
+
+
+
+-----------Apresentação do prejeto e ajustes iniciais--------
+
+	-na pasta "Works"
+	
+	
+		-na pasta "modulo 5"
+
+			- Copiar os arquivos:
+
+				package.json
+				public
+				src
+		
+	- Criar uma nova pasta chamada "modulo 6"
+
+		-Colar os arquivos copiados
+		-abrir a pasta no vsCode
+
+	- Com o vsCode aberto
+
+		-abra o arquivo package.json
+
+			-mude o "name" para:
+				
+				"name": "launchstore"
+
+		-abra a pasta "src", app
+
+			-Deleta os arquivos dentro da pasta "controllers", "models"
+			-Na pasta "views" deixar só o layout
+			-Dentro da pasta config, no arquivo db.js
+
+				-mude a linha "database" para
+
+					database: "launchstoredb"
+
+			-Dentro da pasta lib, no arquivo utils.js
+
+					-deleta a função "age(){}"
+			
+			-No arquivo routes.js deixar apenas:
+
+				const express = require('express')
+				const routes = express.Router()
+
+				routes.get('/', function(req, res){
+					return res.send("ok")
+				})
+
+				module.exports = routes
+
+			-Dentro da pasta public
+
+				-deleta o conteudo dos arquivos "script.js", "styles.css"
+			
+
+
+
+
+
+
+-----------Modelagem de dados com DBML--------
+
+-Abra o site dbdiagrama.io
+
+	-crie a seguinte relação de tabelas
+
+		Table products {
+			id int [pk, increment]
+			category_id int [unique]
+			user_id int [unique]
+			name text [not null]
+			description text [not null]
+			old_price int
+			price int [not null]
+			quantity int [default: 0]
+			status int [default: 1]
+			created_at timestamp [default: `now()`]
+			updated_at timestamp [default: `now()`]
+		}
+
+		Table categories {
+			id int [pk, increment]
+			name text [not null]
+		} 
+
+		Table  {
+			id int [pk, increment]
+			name text
+			path text [not null]
+			product_id int [unique]
+		} 
+
+
+
+
+
+
+
+
+
+
+
+-----------Foreign keys e contraints no SQL--------
+
+
+
+-Ainda no site dbdiagram.io, na ultima linha, escreva
+
+	Ref: products.category_id > categories.id
+	Ref: files.product_id > products.id
+
+	-Faça o export PostgreSQL e salva como "database"
+	dentro da pasta "modulo 6"
+
+-No vsCode Copie o conteudo do arquivo database.SQL
+	
+	-abra o postbird e crie uma database chamada "launchstoredb"
+
+		-Na aba query cole o conteudo e rode a query
+		{tabelas foram criadas}
+
+
+
+
+
+
+
+
+
+__________________________________________________LAYOUT BASICO DA APLICAÇÃO_________________________________________________________
+
+
+
+
+
+-----------Estrutura html do layout, header e footer--------
+
+
+-No terminal do vsCode
+
+	-instale o node-modules, com
+
+		npm install
+
+-No arquivo "layout.njk" mude o title para
+
+	<title>Launchstore</title>
+
+	-abaixo do {%endblock%} da tag <title>, escreva
+
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	-No lugar da tag "header" escreva:
+
+		{% include "parts/header.njk"%}
+
+	-abaixo do {% block content %}, escreva:
+
+		{% include "parts/footer.njk"%}
+	 
+	-Recorte a tag <script>
+
+		-Cole dentro do arquivo footer.njk
+	
+-Dentro da pasta "views" crie a pasta "parts"
+
+	-Dentro da pasta "parts" crie os aquivos:
+
+		footer.njk
+		header.njk
+
+	-No arquivo header.njk, escreva:
+
+		<header>
+			<div class="container">
+				<a href="/">
+					<div class="logo">
+						<h1>Launchstore</h1>
+						<h2>COMPRA E VENDA</h2>
+					</div>
+				</a>
+				<form class="search" method="GET" action="/products/search">
+					<input
+						type="text"
+						name="filter"
+						placeholder="Buscar por Produtos"
+						{% if search.term %}
+							value={{search.term}}
+						{%endif%}
+					>
+				</form>
+
+				<nav class="primary">
+					<ul>
+						<li>
+							<a href="/ads/create">
+								<i class="material-icons">add</i>
+								Novo Anúncio
+							</a>
+						</li>
+						
+						<li>
+							<a href="/accounts">
+								<i class="material-icons">account-circle</i>
+								Minha Conta
+							</a>
+						</li>
+					</ul>
+				</nav>
+			</div>	
+		</header>
+
+-Recorte a tag <script>, do arquivo layout.njk
+
+		-Cole dentro do arquivo footer.njk
+
+-No arquivo footer, acima do script, escreva:
+
+	<footer>Copyright Launchstore</footer>
+
+-No arquivo "routes.js", reescreva:
+
+	routes.get('/', function(req, res){
+		return res.render("layout.njk")
+	})
+
+-No terminal rode o "npm start"
+
+
+
+
+
+
+
+-----------Estilizando layout, header e footer--------]
+
+
+-Abra o arquivo "styles.css"
+
+	-Dentro dele escreva:
+
+		@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap');
+
+		:root {
+			--primary-color: #fd951f;
+			--secundary-color: #1fd4fd;
+
+		}
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			text-decoration: nome;
+			list-style-type: none;
+			border: none;
+		}
+		html,body{
+			min-height: 100vh;
+		}
+		body{
+			font-family: 'Roboto', sans-serif;
+			background-color: #f9f9f9;
+		}
+
+		header, footer{
+			background-color: #black;
+			color: white;
+
+			width: 100%;
+			padding: 32px;
+			text-align: center;
+		}
+
+		header div.container{
+			display: grid;
+			grid-template-columns: 220px auto 280px;
+			align-items: center;
+			grid-gap: 24px;
+		}
+
+		header div.container a{
+			justify-self: start;
+
+		}
+
+		/* logo*/
+		
+		.logo h1 {
+			color: white;
+			font-size: 36px;
+			line-height: 46px;
+		}
+
+		.logo h2 {
+			color: var(--primary-color);
+			font-size: 14px;
+			line-height: 16px;
+			letter-spacing: 2px;
+		}
+
+		/* HEADER SEARCH */
+
+		.search input {
+			width: 100%;
+			padding: 8px 16px;
+			border-radius: 2px;
+			font-size: 16px;
+		}
+
+
+
+
+
+
+
+
+-----------Conhecendo o display flex--------
+
+
+-No fim do conteudo do arquivo "styles.css", escreva:
+
+
+	/* PRIMARY MENU */
+
+	nav.primary ul {
+		display:flex;
+		justify-content: space-between;
+	}
+
+	nav.primary ul li a {
+		display: flex:
+		align-items: center;
+		
+		color: white;
+
+		transition: 200ms;
+	}
+
+
+
+
+
+
+
+-----------Finalizando estilo do header--------
+
+
+-No fim do conteudo do arquivo "styles.css", escreva:
+
+
+	nav.primary ul li a i{
+		margin-right: 8px;
+	}
+
+	
+
+
+
+-Abaixo da tag "body{}", escreva
+
+	.container {
+		width: 90%;
+		max-width: 940px;
+		margin: 0 auto:
+	}
+
+-Abaixo da tag "nav.primary ul li a{}", escreva
+
+	nav.primary ul li a:hover {
+		color: var(--primary-color);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+__________________________________________________LAYOUT DO FORMULARIO DE CADASTRO_________________________________________________________
+
+
+
+
+
+----------Construindo formulario de cadastro de Produtos--------
+
+
+-Na pasta controllers, crie o arquivo "ProductController.js"
+
+	-Dentro do "ProductController.js" escreva:
+
+	module.exports = {
+		create(req, res){
+			return res.render("products/create.njk")
+		}
+	}
+
+-No arquivo "routes.js"
+
+	-Abaixo do "const routes", escreva:
+
+		const ProductController = require('.app/controllers/ProductController')
+
+	-Abaixo da "rota.get '/'", escreva:
+
+		routes.get('/products/create', ProductController.create)
+
+		routes.get('/ads/create', function(req, res){
+			return res.redirect("/products/create")
+		})
+
+-Na pasta "views"
+
+	-Crie a pasta "products"
+	-Dentro da pasta "products"
+
+		-crie o arquivo "create.njk"
+		
+		-Copiei o conteudo do "create.njk" do members do modulo5
+			-cole o conteudo no "create.njk" da pasta "products"
+
+		-No arquivo create.njk
+
+			-Reescreva o conteudo do {%block content%} para
+
+				<section class="container form">
+					<form method="POST" action="/products">
+						
+						<div class="header">
+							<h3>Novo Membro</h3>
+						</div>
+						
+						<div class="fildes">
+							{% include 'products/fields.njk'%}
+						</div>
+
+						<button type="submit">Salvar</button>
+					</form>
+				</section>
+
+
+
+
+
+
+
+
+----------Criando campos do fomulário--------
+
+
+-Na pasta "products"
+
+	-crie o arquivo "fields.njk"
+
+	-Dentro do fields.njk, escreva:
+
+		<div class="item">
+			<div>Categoria</div>
+			<div>
+				<select name="category_id">
+					{% for category in categories%}
+					<option value="{{category.id}}" {% if product.category_id == category.id %}selected{%endif%}>
+						{{category.name}}
+					</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+
+		<div class="item">
+			<div>Name</div>
+			<div>
+				<input
+					type="text"
+					name="name"
+					placeholder="Digite o Título do Anúncio"
+					value="{{ product.name }}"
+				>
+			</div>
+		</div>
+
+		<div class="item">
+			<div>Descrição</div>
+			<div>
+				<textarea name="description">
+				 {{product.description}}
+				</textarea>
+			</div>
+		</div>
+
+		{#campo de foto#}
+
+		<div class="item">
+			<div>Valor</div>
+			<div>
+				<input
+					type="text"
+					name="price"
+					placeholder="Preço do Produto"
+					value="{{ product.price }}"
+					{# faremos uma mascara de dinheiro/reais #}
+				>
+			</div>
+			{% if product.old_price %}
+				<input type="hidden" name="old_price" value={{product.old_price}}>
+			{%endif%}
+		</div>
+
+		<div class="item">
+			<div>Quantidade</div>
+			<div>
+				<input
+					type="number"
+					name="quantity"
+					placeholder="Estoque Disponível"
+					value="{{ product.quantity }}"
+				>
+			</div>
+		</div>
+
+		{% if product.status %}
+		<div class="item">
+			<div>Disponível ?</div>
+			<div>
+				<span>
+					<input
+						type="radio"
+						name="status"
+						value="1"
+						{% if product.status == '1' %}
+							checked
+						{% endif %}> Sim
+				</span>
+				<span>
+					<input
+						type="radio"
+						name="status"
+						value="0"
+						{% if product.status == '0' %}
+							checked
+						{% endif %}> Não
+				</span>
+			</div>
+		</div>
+		{% endif %}
+
+
+
+
+
+
+
+----------Estilizando Base do formulario de Cadastro--------
+
+-Abra o arquivo styles.css, no fim escreva:
+
+
+	/* PRODUCTS FORM */
+
+	section.form{
+		background-color: white;
+		
+		padding: 32px 24px;
+		margin: 32px auto;
+
+		box-shadow: 2px 2px 2px -4px rgba(60, 60, 60, .9);
+		border: 1px solid #efefef;
+		border-radius: 4px;
+
+		max-width: 700px;
+		width:90%;
+	}
+
+	section.form .header h3{
+		font-size: 14px;
+		line-height: 24px;
+		letter-spacing: 0.7px;
+		text-transform: uppercase;
+		
+		font-weight: bold;
+		color: var(--primary-color);
+
+		margin-bottom: 16px;
+	}
+
+
+
+
+
+
+
+
+----------Estilizando campos do formulario --------
+
+
+-Abra o arquivo styles.css, no fim escreva:
+
+	form .item {
+		margin-bottom: 16px;
+
+	}
+	form .item > div:nth-child(1){
+		color: #777;
+		text-transform: uppercase;
+		font-size: 14px;
+		font-weight: bold;
+
+		margin-bottom: 8px;
+	}
+
+	form .items input[type="text"],
+	form .items input[type="number"],
+	form .items textarea,
+	form .items select {
+		width: 100%;
+
+		padding: 8px 16px;
+
+		box-shadow: 2px 2px 2px -4px rgba(63,63,63, .9);
+
+		border: 1px solid #efefef;
+		border-radius: 4px;
+
+		font-size: 16px;
+	}
+
+
+
+
+
+
+
+
+
+
+---------- Select customizado --------
+
+
+-Abra o arquivo styles.css, no fim escreva:
+
+
+	form .item select {
+		/* permitir estilização no select */
+		-moz-appaerance: none;
+		-webkit-appaerance: none;
+		appaerance: none;
+
+		/* trazer de volta o icone lateral*/
+
+		background-color: #fff;
+		background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+			linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+		background-repeat: no-repeat;
+		background-position: right .7em top 50%, 0 0;
+		background-size: .65em auto, 100%;
+
+	}
+
+
+
+
+
+
+
+---------- Finalizando estilo do formulario --------
+
+
+
+-Abra o arquivo styles.css, no fim escreva:
+
+	form .item textarea {
+		min-height: 150px;
+	}
+
+	form .fields {
+		margin-bottom: 64px;
+	}
+
+-Na pasta products
+
+	-abra o arquivo create.njk
+
+		-coloque a seguinte classe no botão >salvar<
+
+		class="button"
+
+-Abra o arquivo styles.css
+
+	-Abaixo da tag ".container{}", escreva:
+
+		.button {
+			background-color: var(--primary-color);
+			color: #white;
+
+			display: block;
+			margin: 16px 0;
+			padding: 12px 16px;
+			
+			width: 100%;
+			border-radius: 4px;
+
+			/* para colocar o botão para baixo - quando estive no grid*/
+			align-self: end;
+
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: 16px;
+			text-align: center;
+
+			cursor: pointer;
+
+			transition: all 0.2s;
+		}
+
+		.button:hover {
+			background-color: #d7780b
+		}
+
+
+
+
+
+
+
+
+
